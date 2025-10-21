@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { Navbar, Welcome, Footer, Services, Transactions } from "./components";
 
 export default function App() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">Hello World!</h1>
+    <div className="min-h-screen">
+      <div className="gradient-bg-welcome">
+        <Navbar />
+        <Welcome />
+      </div>
+
+      <Services />
+      <Transactions />
+      <Footer />
     </div>
   );
 }
