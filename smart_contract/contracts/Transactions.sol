@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 contract Transactions {
-    uint256 transcationCount;
+    uint256 transactionCount;
 
     event Transfer(address from, address receiver, uint amount, string message, uint256 timestamp, string keyword);
 
@@ -17,7 +17,7 @@ contract Transactions {
 
     TransferStruct[] transactions;
     function createTransaction(address payable receiver, uint amount, string memory keyword, string memory message) public {
-        transcationCount += 1;
+        transactionCount += 1;
         transactions.push(TransferStruct(msg.sender, receiver, amount, message, block.timestamp, keyword));
 
         emit Transfer(msg.sender, receiver, amount, message, block.timestamp, keyword);

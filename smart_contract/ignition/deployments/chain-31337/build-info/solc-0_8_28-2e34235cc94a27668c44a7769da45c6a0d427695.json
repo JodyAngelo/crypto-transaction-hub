@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-2e34235cc94a27668c44a7769da45c6a0d427695",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/Transactions.sol": "project/contracts/Transactions.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/Transactions.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\r\npragma solidity ^0.8.28;\r\n\r\ncontract Transactions {\r\n    uint256 transactionCount;\r\n\r\n    event Transfer(address from, address receiver, uint amount, string message, uint256 timestamp, string keyword);\r\n\r\n    struct TransferStruct {\r\n        address sender; \r\n        address receiver; \r\n        uint amount; \r\n        string message; \r\n        uint256 timestamp; \r\n        string keyword;\r\n    }\r\n\r\n    TransferStruct[] transactions;\r\n    function createTransaction(address payable receiver, uint amount, string memory keyword, string memory message) public {\r\n        transactionCount += 1;\r\n        transactions.push(TransferStruct(msg.sender, receiver, amount, message, block.timestamp, keyword));\r\n\r\n        emit Transfer(msg.sender, receiver, amount, message, block.timestamp, keyword);\r\n    }\r\n\r\n    function getAllTransactions() public view returns (TransferStruct[] memory) {\r\n        return transactions;\r\n    }\r\n}"
+      }
+    }
+  }
+}
