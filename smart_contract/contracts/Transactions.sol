@@ -16,11 +16,14 @@ contract Transactions {
     }
 
     TransferStruct[] transactions;
-    function createTransaction(address payable receiver, uint amount, string memory keyword, string memory message) public {
+    function createTransaction(address payable receiver, string memory keyword, string memory message) public payable {
+        require(msg.value > 0, "Must Send some ETH");
         transactionCount += 1;
-        transactions.push(TransferStruct(msg.sender, receiver, amount, message, block.timestamp, keyword));
+        transactions.push(TransferStruct(msg.sender, receiver, msg.value, message, block.timestamp, keyword));
 
-        emit Transfer(msg.sender, receiver, amount, message, block.timestamp, keyword);
+        receiver.transfer(msg.value);
+
+        emit Transfer(msg.sender, receiver, msg.value, message, block.timestamp, keyword);
     }
 
     function getAllTransactions() public view returns (TransferStruct[] memory) {
