@@ -1,15 +1,8 @@
-import { useState, useEffect } from "react";
+import { useTransactionContext } from "../hooks/useTransactionContext";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import { Loader } from "./";
-import {
-  connectProvider,
-  initSigner,
-  initContract,
-  requestAccount,
-  sendTransaction,
-} from "../utils/contractServices";
 import { shortenAddress } from "../utils/shortenAddress";
 
 interface InputProps {
@@ -18,18 +11,6 @@ interface InputProps {
   type: string;
   value?: string;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>, name: string) => void;
-}
-
-type TransactionFormData = {
-  addressTo: string;
-  amount: string;
-  keyword: string;
-  message: string;
-};
-
-interface SendTransactionData {
-  from: string;
-  transaction: TransactionFormData;
 }
 
 const Input = ({
@@ -50,110 +31,16 @@ const Input = ({
 );
 
 export default function Welcome() {
-  const [currentAccount, setCurrentAccount] = useState<string | null>(null);
-  const [formData, setFormData] = useState<TransactionFormData>({
-    addressTo: "",
-    amount: "",
-    keyword: "",
-    message: "",
-  });
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [isSending, setIsSending] = useState(false);
+  const {
+    connectWallet,
+    sendTransaction,
+    handleChange,
+    isSending,
+    currentAccount,
+    formData,
+  } = useTransactionContext();
   const commonStyles =
     "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
-
-  const connectWallet = async () => {
-    try {
-      // 1: mark connection state
-      setIsConnecting(true);
-
-      // 2: connect provider (MetaMask / injected wallet)
-      // @ts-ignore
-      if (!window.ethereum) {
-        console.error("MetaMask not found. Please install it first.");
-        return;
-      }
-      // @ts-ignore
-      connectProvider(window.ethereum);
-
-      // 3: request accounts (user approval popup)
-      const account = await requestAccount();
-      if (!account) return;
-
-      // 4: initialize signer (bind to current account)
-      await initSigner(account);
-
-      // 5: update UI / React state
-      setCurrentAccount(account);
-
-      // 6: initialize contract (link ABI + signer)
-      await initContract();
-
-      console.log(`Wallet connected: ${account}`);
-    } catch (error) {
-      console.error("Wallet connection failed:", error);
-    } finally {
-      // 7: allow listener again (so account switch works)
-      setIsConnecting(false);
-    }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    name: string
-  ) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: e.target.value,
-    }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      setIsSending(true);
-      const txData: SendTransactionData = {
-        from: currentAccount!,
-        transaction: formData,
-      };
-
-      await sendTransaction(txData);
-    } catch (error) {
-      console.error("Transaction Failed:", error);
-    } finally {
-      setIsSending(false);
-      setFormData({
-        addressTo: "",
-        amount: "",
-        keyword: "",
-        message: "",
-      });
-    }
-  };
-
-  useEffect(() => {
-    const handleAccountChange = async (accounts: string[]) => {
-      if (isConnecting) return;
-
-      if (accounts.length === 0) {
-        console.log("Metamask Disconnected");
-        setCurrentAccount(null);
-        return;
-      }
-
-      console.log("Account Switched:", accounts[0]);
-      await initSigner(accounts[0]);
-      await initContract();
-      setCurrentAccount(accounts[0]);
-    };
-
-    // @ts-ignore
-    window.ethereum.on("accountsChanged", handleAccountChange);
-
-    return () => {
-      // @ts-ignore
-      window.ethereum.removeListener("accountsChanged", handleAccountChange);
-    };
-  }, [isConnecting]);
 
   return (
     <div className="flex w-full justify-center items-center">
@@ -258,7 +145,7 @@ export default function Welcome() {
             ) : (
               <button
                 type="button"
-                onClick={handleSubmit}
+                onClick={sendTransaction}
                 disabled={!currentAccount}
                 className={`text-white w-full mt-2 border p-2 border-[#3d4f7c] rounded-full  transition-all duration-300 ease-out transform ${
                   !currentAccount
