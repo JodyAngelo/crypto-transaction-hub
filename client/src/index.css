@@ -74,19 +74,28 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* black glassmorphism */
+.black-glassmorphism {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 16px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .eth-card {
-  background-color: #a099ff;
+  background-color: #1a1a1a;
   background-image: radial-gradient(
       at 83% 67%,
-      rgb(152, 231, 156) 0,
+      rgba(255, 255, 255, 0.2) 0,
       transparent 58%
     ),
-    radial-gradient(at 67% 20%, hsla(357, 94%, 71%, 1) 0, transparent 59%),
-    radial-gradient(at 88% 35%, hsla(222, 81%, 65%, 1) 0, transparent 50%),
-    radial-gradient(at 31% 91%, hsla(9, 61%, 61%, 1) 0, transparent 52%),
-    radial-gradient(at 27% 71%, hsla(336, 91%, 65%, 1) 0, transparent 49%),
-    radial-gradient(at 74% 89%, hsla(30, 98%, 65%, 1) 0, transparent 51%),
-    radial-gradient(at 53% 75%, hsla(174, 94%, 68%, 1) 0, transparent 45%);
+    radial-gradient(at 67% 20%, rgba(180, 180, 180, 0.15) 0, transparent 59%),
+    radial-gradient(at 88% 35%, rgba(90, 90, 90, 0.3) 0, transparent 50%),
+    radial-gradient(at 31% 91%, rgba(255, 255, 255, 0.08) 0, transparent 52%),
+    radial-gradient(at 27% 71%, rgba(160, 160, 160, 0.12) 0, transparent 49%),
+    radial-gradient(at 74% 89%, rgba(100, 100, 100, 0.15) 0, transparent 51%),
+    radial-gradient(at 53% 75%, rgba(200, 200, 200, 0.1) 0, transparent 45%);
 }
 
 .text-gradient {
