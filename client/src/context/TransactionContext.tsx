@@ -1,6 +1,14 @@
 import { createContext, useState, useEffect } from "react";
-import { BrowserProvider, JsonRpcSigner, Contract, parseEther } from "ethers";
+import {
+  BrowserProvider,
+  JsonRpcSigner,
+  Contract,
+  parseEther,
+  formatEther,
+} from "ethers";
+import type { BigNumberish } from "ethers";
 import { contractAddress, contractABI } from "../utils/constants";
+import { getTransactionsByAddress } from "../services/etherscan";
 import type { ReactNode } from "react";
 
 type TransactionFormData = {
@@ -10,10 +18,20 @@ type TransactionFormData = {
   message: string;
 };
 
+interface RawTransferStruct {
+  hash: string;
+  sender: string;
+  receiver: string;
+  amount: BigNumberish;
+  timestamp: BigNumberish;
+}
+
 interface TransactionContextType {
   currentAccount: string | null;
   formData: TransactionFormData;
   isSending: boolean;
+  balance: string | null;
+  transactions: RawTransferStruct[];
   connectWallet: () => Promise<void>;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>, name: string) => void;
   sendTransaction: () => Promise<void>;
@@ -71,12 +89,14 @@ const createEthereumContract = async () => {
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const [currentAccount, setCurrentAccount] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [balance, setBalance] = useState<string | null>(null);
   const [formData, setFormData] = useState<TransactionFormData>({
     addressTo: "",
     amount: "",
     keyword: "",
     message: "",
   });
+  const [transactions, setTransactions] = useState<RawTransferStruct[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -108,6 +128,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       const activeAccount = accounts[0];
       await initSigner(activeAccount);
       await createEthereumContract();
+      await getEthBalance(activeAccount);
       setCurrentAccount(activeAccount);
 
       console.log(`Using primary account: ${activeAccount}`);
@@ -121,12 +142,14 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     if (accounts.length === 0) {
       console.log("MetaMask Disconnected");
       setCurrentAccount(null);
+      setBalance(null);
       return;
     }
 
     console.log("Account Switched:", accounts[0]);
     await initSigner(accounts[0]);
     await createEthereumContract();
+    await getEthBalance(accounts[0]);
     setCurrentAccount(accounts[0]);
   };
 
@@ -143,6 +166,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
 
       await initSigner(accounts[0]); // 3. initialize signer (bind to current account)
       await createEthereumContract(); //4. initialize contract (link ABI + signer)
+      await getEthBalance(accounts[0]);
 
       console.log(`Wallet successfully connected to: ${accounts[0]}`);
     } catch (error) {
@@ -182,6 +206,15 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getEthBalance = async (address: string) => {
+    if (!provider)
+      return alert("No provider detected. Please install a provider");
+    const balance = await provider.getBalance(address);
+    const balanceInEth = parseFloat(formatEther(balance));
+    const cleanBalance = Math.floor(balanceInEth * 100) / 100;
+    setBalance(cleanBalance.toString());
+  };
+
   useEffect(() => {
     if (window.ethereum) {
       console.log("Connecting to Ethereum provider...");
@@ -196,6 +229,21 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!currentAccount) return;
+
+    console.log("Fetching transactions for account:", currentAccount);
+    getTransactionsByAddress(currentAccount)
+      .then(setTransactions)
+      .catch(console.error);
+  }, [currentAccount]);
+
+  useEffect(() => {
+    if (!isSending && currentAccount) {
+      getEthBalance(currentAccount);
+    }
+  }, [isSending]);
+
   return (
     <TransactionContext.Provider
       value={{
@@ -204,6 +252,8 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
         currentAccount,
         formData,
         isSending,
+        balance,
+        transactions,
         sendTransaction,
       }}
     >
