@@ -26,7 +26,7 @@ const Input = ({
     step="any"
     value={value}
     onChange={(e) => handleChange(e, name)}
-    className="my-2 w-full rounded-sm! p-2 outline-none! bg-transparent! border-none! text-white text-sm white-glassmorphism"
+    className="my-2 w-full p-2 outline-none bg-transparent border border-[#d3d3d3]/60 rounded-md text-[#1F2A36] placeholder:text-[#1F2A36]/70 text-sm focus:border-[#1F2A36] transition-colors duration-200"
   />
 );
 
@@ -40,17 +40,18 @@ export default function Welcome() {
     currentAccount,
     formData,
   } = useTransactionContext();
+
   const commonStyles =
-    "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
+    "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center text-sm font-medium text-[#1F2A36] backdrop-blur-sm border border-white/60 shadow-[0_2px_10px_rgba(0,0,0,0.06)] hover:bg-white/60 hover:shadow-[0_4px_15px_rgba(0,0,0,0.1)]transition-all duration-300";
 
   return (
     <div className="flex w-full justify-center items-center">
       <div className="flex mf:flex-row flex-col items-start justify-between md:p-20 py-12 px-4">
         <div className="flex flex-1 justify-start flex-col mf:mr-10">
-          <h1 className="text-3xl sm:text-5xl text-white text-gradient py-1">
+          <h1 className="text-3xl sm:text-5xl text-[#1F2A36] font-semibold tracking-tight py-1">
             Send Crypto <br /> across the world
           </h1>
-          <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base">
+          <p className="text-left mt-5 text-[#1F2A36]/80 font-normal md:w-9/12 w-11/12 text-base leading-relaxed">
             Explore the crypto world. Buy and sell cryptocurrencies easily on
             SendIt
           </p>
@@ -59,10 +60,10 @@ export default function Welcome() {
             <button
               type="button"
               onClick={connectWallet}
-              className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]"
+              className="flex flex-row justify-center items-center my-5 bg-[#1F2A36] p-3 rounded-full cursor-pointer hover:bg-[#364150] transition-colors duration-200"
             >
-              <AiFillPlayCircle className="text-white mr-2" />
-              <p className="text-white text-base font-semibold">
+              <AiFillPlayCircle className="text-[#f9f5f0] mr-2" />
+              <p className="text-[#f9f5f0] text-base font-semibold">
                 Connect Wallet
               </p>
             </button>
@@ -88,10 +89,9 @@ export default function Welcome() {
 
         <div className="flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10">
           {/* Ethereum Card */}
-          <div className="p-3 justify-end items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card black-glassmorphism">
+          <div className="p-3 justify-end items-start flex-col rounded-xl h-40 w-72 my-5 eth-card black-glassmorphism">
             <div className="flex justify-between flex-col w-full h-full">
               <div className="flex justify-between items-start">
-                {/* Balance Display */}
                 <div>
                   <p className="text-gray-300 text-xs mt-1">
                     Available Balance
@@ -121,7 +121,7 @@ export default function Welcome() {
             </div>
           </div>
 
-          <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
+          <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center bg-[#ffffffcc] rounded-xl shadow-[0_4px_25px_rgba(0,0,0,0.12)] border border-[#1F2A36]/10">
             <Input
               placeholder="Address To"
               name="addressTo"
@@ -139,22 +139,12 @@ export default function Welcome() {
             />
 
             <Input
-              placeholder="Keyword (Gif)"
-              name="keyword"
-              type="text"
-              value={formData.keyword}
-              handleChange={handleChange}
-            />
-
-            <Input
               placeholder="Enter Message"
               name="message"
               type="text"
               value={formData.message}
               handleChange={handleChange}
             />
-
-            <div className="h-px w-full bg-gray-400 my-2" />
 
             {isSending ? (
               <Loader />
@@ -163,10 +153,10 @@ export default function Welcome() {
                 type="button"
                 onClick={sendTransaction}
                 disabled={!currentAccount}
-                className={`text-white w-full mt-2 border p-2 border-[#3d4f7c] rounded-full  transition-all duration-300 ease-out transform ${
+                className={`text-[#f9f5f0] w-full mt-2 border p-2 border-[#1F2A36] rounded-full font-medium transition-all duration-300 ease-out transform ${
                   !currentAccount
-                    ? "bg-gray-500 cursor-not-allowed opacity-60"
-                    : "hover:bg-[#3d4f7c] hover:shadow-[0_0_15px_rgba(61,79,124,0.6)] hover:scale-[1.02] cursor-pointer"
+                    ? "bg-gray-400 cursor-not-allowed opacity-60"
+                    : "bg-[#1F2A36] hover:bg-[#2b3845] hover:shadow-[0_0_15px_rgba(31,42,54,0.3)] hover:scale-[1.02] cursor-pointer"
                 }`}
               >
                 Send Now
