@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import {
   BrowserProvider,
-  JsonRpcSigner,
   Contract,
   parseEther,
   formatEther,
