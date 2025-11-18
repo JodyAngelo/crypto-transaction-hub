@@ -1,20 +1,24 @@
 # Node modules
-/node_modules
+node_modules/
 
-# Compilation output
-/dist
+# Hardhat build artifacts
+artifacts/
+cache/
 
-# pnpm deploy output
-/bundle
-
-# Hardhat Build Artifacts
-/artifacts
-
-# Hardhat compilation (v2) support directory
-/cache
+# Ignition deployment folders (contains filenames with #)
+ignition/
 
 # Typechain output
-/types
+typechain/
+types/
 
-# Hardhat coverage reports
-/coverage
+# Coverage reports
+coverage/
+
+# Env files (NEVER commit private keys)
+.env
+.env.local
+.env.test
+
+# Temporary files
+*.log
