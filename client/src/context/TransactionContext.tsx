@@ -14,7 +14,6 @@ import type { ReactNode } from "react";
 type TransactionFormData = {
   addressTo: string;
   amount: string;
-  keyword: string;
   message: string;
 };
 
@@ -93,7 +92,6 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const [formData, setFormData] = useState<TransactionFormData>({
     addressTo: "",
     amount: "",
-    keyword: "",
     message: "",
   });
   const [transactions, setTransactions] = useState<RawTransferStruct[]>([]);
@@ -180,12 +178,11 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     try {
       if (!contract) return console.log("Contract not yet Initialized!");
 
-      const { addressTo, amount, keyword, message } = formData;
+      const { addressTo, amount, message } = formData;
 
       setIsSending(true);
       const txHash = await contract.createTransaction(
         addressTo,
-        keyword,
         message,
         { value: parseEther(amount) }
       );
@@ -200,7 +197,6 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       setFormData({
         addressTo: "",
         amount: "",
-        keyword: "",
         message: "",
       });
     }
